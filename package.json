@@ -1,0 +1,41 @@
+{
+  "name": "coaching-feedback-ai-system",
+  "version": "1.0.0",
+  "description": "리더를 위한 통합형 코칭피드백 AI 시스템",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "compromise": "^14.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "moment": "^2.29.4",
+    "multer": "^1.4.5-lts.1",
+    "natural": "^6.7.0",
+    "node-cron": "^3.0.3",
+    "openai": "^4.20.1",
+    "sentiment": "^5.0.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.8",
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "coaching",
+    "feedback",
+    "ai",
+    "leadership",
+    "team-management"
+  ],
+  "author": "Coaching AI System",
+  "license": "MIT"
+}

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insight Report - 코칭피드백 AI 시스템</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Apple-style Design System */
+        :root {
+            /* Color Palette */
+            --magenta: #D7177B;
+            --purple: #551D83;
+            --light-blue: #70C0E6;
+            --deep-blue: #008785;
+            --light-gray: #C4C4C4;
+            
+            /* Apple-style Colors */
+            --apple-white: #FFFFFF;
+            --apple-gray-50: #F9FAFB;
+            --apple-gray-100: #F3F4F6;
+            --apple-gray-200: #E5E7EB;
+            --apple-gray-300: #D1D5DB;
+            --apple-gray-400: #9CA3AF;
+            --apple-gray-500: #6B7280;
+            --apple-gray-600: #4B5563;
+            --apple-gray-700: #374151;
+            --apple-gray-800: #1F2937;
+            --apple-gray-900: #111827;
+            
+            /* Typography */
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--apple-gray-50);
+            color: var(--apple-gray-900);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Apple-style Header */
+        .apple-header {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--magenta) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .apple-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            pointer-events: none;
+        }
+        
+        .apple-header * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .apple-header-text {
+            color: #ffffff !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+        }
+        
+        .apple-header-subtitle {
+            color: rgba(255, 255, 255, 0.95) !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .apple-header-description {
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Apple-style Cards */
+        .apple-card {
+            background: var(--apple-white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--apple-gray-200);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .apple-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--apple-gray-300);
+        }
+        
+        /* Apple-style Buttons */
+        .apple-btn {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        
+        .apple-btn-primary {
+            background: var(--magenta);
+            color: var(--apple-white);
+        }
+        
+        .apple-btn-primary:hover {
+            background: #C0156B;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .apple-btn-secondary {
+            background: var(--apple-white);
+            color: var(--apple-gray-700);
+            border: 1px solid var(--apple-gray-300);
+        }
+        
+        .apple-btn-secondary:hover {
+            background: var(--apple-gray-50);
+            border-color: var(--apple-gray-400);
+        }
+        
+        /* Apple-style Form Elements */
+        .apple-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--apple-gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--apple-white);
+        }
+        
+        .apple-input:focus {
+            outline: none;
+            border-color: var(--magenta);
+            box-shadow: 0 0 0 3px rgba(215, 23, 123, 0.1);
+        }
+        
+        .apple-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--apple-gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            background: var(--apple-white);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .apple-select:focus {
+            outline: none;
+            border-color: var(--magenta);
+            box-shadow: 0 0 0 3px rgba(215, 23, 123, 0.1);
+        }
+        
+        /* Apple-style Typography */
+        .apple-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 2.25rem;
+            line-height: 1.2;
+            color: var(--apple-gray-900);
+            letter-spacing: -0.025em;
+        }
+        
+        .apple-subtitle {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.5rem;
+            line-height: 1.3;
+            color: var(--apple-gray-800);
+            letter-spacing: -0.025em;
+        }
+        
+        .apple-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--apple-gray-600);
+        }
+        
+        .apple-text-sm {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--apple-gray-500);
+        }
+        
+        /* Apple-style Loading */
+        .apple-loading {
+            animation: apple-spin 1s linear infinite;
+        }
+        
+        @keyframes apple-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Apple-style Animations */
+        @keyframes apple-fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .apple-fade-in {
+            animation: apple-fade-in 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Range Slider Styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: var(--apple-gray-200);
+            border-radius: 3px;
+            outline: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--magenta);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--magenta);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* File Input Styling */
+        input[type="file"] {
+            padding: 0.5rem;
+            border: 1px solid var(--apple-gray-300);
+            border-radius: var(--radius-md);
+            background: var(--apple-white);
+            font-size: 0.875rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input[type="file"]:focus {
+            outline: none;
+            border-color: var(--magenta);
+            box-shadow: 0 0 0 3px rgba(215, 23, 123, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .apple-title {
+                font-size: 1.875rem;
+            }
+            
+            .apple-subtitle {
+                font-size: 1.25rem;
+            }
+            
+            .apple-card {
+                border-radius: var(--radius-lg);
+            }
+        }
+
+        /* 로딩 모달 스타일 */
+        .loading-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .loading-modal.show {
+            display: flex;
+        }
+
+        .loading-content {
+            background: white;
+            border-radius: var(--radius-2xl);
+            padding: 3rem 4rem;
+            box-shadow: var(--shadow-2xl);
+            text-align: center;
+            max-width: 500px;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-spinner {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-spinner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 5px solid var(--apple-gray-200);
+            border-radius: 50%;
+        }
+
+        .loading-spinner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 5px solid transparent;
+            border-top-color: var(--magenta);
+            border-right-color: var(--magenta);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-emoji {
+            font-size: 3.5rem;
+            position: relative;
+            z-index: 1;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.1) rotate(5deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 로딩 모달 -->
+    <div id="loadingModal" class="loading-modal">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <div class="loading-emoji">📊</div>
+            </div>
+            <h3 class="apple-subtitle mb-3" style="color: var(--magenta);">리포트 생성 중</h3>
+            <p class="apple-text mb-4">AI가 데이터를 분석하고 있습니다</p>
+            <p class="apple-text-sm mt-4" style="color: var(--apple-gray-500);">잠시만 기다려주세요. 최대 30초 소요될 수 있습니다.</p>
+        </div>
+    </div>
+    <!-- Apple-style Header -->
+    <header class="apple-header">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-4">
+                        <img src="logo_lgchem_white.png" alt="LG화학" class="h-10 w-auto" style="filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));">
+                        <div class="h-8 w-px bg-white opacity-30"></div>
+                    </div>
+                    <div>
+                        <h1 class="apple-title apple-header-text mb-1">Insight Report</h1>
+                        <p class="apple-text-sm apple-header-subtitle">감정 분석과 성과 데이터를 통한 종합 인사이트</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="apple-btn apple-btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>메인으로</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+        <div class="max-w-4xl mx-auto">
+            <!-- Page Header -->
+            <section class="text-center mb-12 apple-fade-in">
+                <div class="apple-icon mx-auto mb-6" style="color: var(--purple); width: 4rem; height: 4rem; font-size: 2.6rem;">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h2 class="apple-title mb-6">Insight Report 생성</h2>
+                <p class="apple-text text-xl max-w-2xl mx-auto">팀원의 감정, 피드백, 성과 데이터를 종합 분석하여 <br>
+                    리더에게 객관적이고 실행 가능한 인사이트를 제공합니다.<br>
+                    최근 일정 기간 동안의 데이터를 기반으로, 팀원과의 협업 방향과 리더십 개입 포인트를 제시합니다.
+                    <br><br>
+                    아래 정보를 입력하면 AI가 팀원의 정서 패턴, 성과 추이, <br>
+                    협업 특성을 분석하여 맞춤형 인사이트 리포트를 생성합니다.<br>
+                    리포트는 향후 코칭·피드백·성과관리 Agent에 자동 반영됩니다.</p>
+            </section>
+
+            <!-- Form Section -->
+            <section class="apple-card p-8 mb-8 apple-fade-in">
+                <form id="insightReportForm">
+                    <!-- 기본 정보 -->
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">팀원 이름</label>
+                            <input type="text" id="insightMemberName" class="apple-input" placeholder="예: 이영희" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">분석 기간</label>
+                            <select id="analysisPeriod" class="apple-select">
+                                <option value="30">최근 30일</option>
+                                <option value="60">최근 60일</option>
+                                <option value="90">최근 90일</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 분석 대상 데이터 -->
+                    <div class="mb-8">
+                        <h3 class="apple-subtitle text-lg mb-6 text-gray-800">분석 대상 데이터</h3>
+                        
+                        <!-- 피드백 로그 -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">피드백 로그</label>
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-4">
+                                    <input type="file" id="feedbackLogFile" class="apple-input" accept=".txt,.doc,.docx" multiple>
+                                    <span class="text-sm text-gray-500">또는</span>
+                                </div>
+                                <textarea id="feedbackLogText" class="apple-input" rows="3" placeholder="최근 동료 피드백 문장, 1:1 메모 등을 입력하세요..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- 감정 요약 메모 -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">감정 요약 메모</label>
+                            <textarea id="emotionSummary" class="apple-input" rows="2" placeholder="예: 최근 피로도 높음, 피드백 수용도 낮음"></textarea>
+                        </div>
+
+                        <!-- 성과지표 데이터 -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">성과지표 데이터</label>
+                            <div class="space-y-3">
+                                <input type="text" id="kpiAchievement" class="apple-input" placeholder="예: KPI 달성률 80%">
+                                <input type="text" id="projectCompletion" class="apple-input" placeholder="예: 프로젝트 완료 2건">
+                            </div>
+                        </div>
+
+                        <!-- 팀 협업 지표 -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">팀 협업 지표</label>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-2">협업 만족도 (1-5)</label>
+                                    <input type="range" id="collaborationSatisfaction" class="w-full" min="1" max="5" value="3">
+                                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                        <span>1</span>
+                                        <span>2</span>
+                                        <span>3</span>
+                                        <span>4</span>
+                                        <span>5</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-2">피드백 빈도 (1-5)</label>
+                                    <input type="range" id="feedbackFrequency" class="w-full" min="1" max="5" value="3">
+                                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                        <span>1</span>
+                                        <span>2</span>
+                                        <span>3</span>
+                                        <span>4</span>
+                                        <span>5</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 리더의 분석 목적 -->
+                    <div class="mb-8">
+                        <h3 class="apple-subtitle text-lg mb-6 text-gray-800">리더의 분석 목적</h3>
+                        
+                        <!-- 인사이트 초점 -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">인사이트 초점 <span class="text-red-500">*</span></label>
+                            <select id="insightFocus" class="apple-select" required>
+                                <option value="">선택하세요</option>
+                                <option value="motivation">팀원 동기 파악</option>
+                                <option value="performance">성과 및 성장 진단</option>
+                                <option value="feedback">피드백 수용도 분석</option>
+                                <option value="emotion">감정 패턴 모니터링</option>
+                            </select>
+                        </div>
+
+                        <!-- 보고서 활용 목적 -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">보고서 활용 목적</label>
+                            <select id="reportPurpose" class="apple-select">
+                                <option value="">선택하세요</option>
+                                <option value="coaching">코칭 대화 준비</option>
+                                <option value="evaluation">평가 피드백 자료</option>
+                                <option value="leadership">리더십 리뷰 공유</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 추가 메모 -->
+                    <div class="mb-8">
+                        <h3 class="apple-subtitle text-lg mb-6 text-gray-800">추가 메모</h3>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">리더 코멘트</label>
+                            <textarea id="leaderComment" class="apple-input" rows="4" placeholder="분석 시 참고할 추가 정보나 개인 의견을 입력하세요..."></textarea>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <a href="index.html" class="apple-btn apple-btn-secondary">취소</a>
+                        <button type="submit" class="apple-btn apple-btn-primary">
+                            <i class="fas fa-chart-line"></i>
+                            <span>리포트 생성</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Result Section -->
+            <section id="insightReportResult" class="hidden">
+                <!-- 결과가 여기에 표시됩니다 -->
+            </section>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

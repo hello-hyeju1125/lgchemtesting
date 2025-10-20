@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리더를 위한 통합형 코칭피드백 AI 시스템</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Apple-style Design System */
+        :root {
+            /* Color Palette */
+            --magenta: #D7177B;
+            --purple: #551D83;
+            --light-blue: #70C0E6;
+            --deep-blue: #008785;
+            --light-gray: #C4C4C4;
+            
+            /* Apple-style Colors */
+            --apple-white: #FFFFFF;
+            --apple-gray-50: #F9FAFB;
+            --apple-gray-100: #F3F4F6;
+            --apple-gray-200: #E5E7EB;
+            --apple-gray-300: #D1D5DB;
+            --apple-gray-400: #9CA3AF;
+            --apple-gray-500: #6B7280;
+            --apple-gray-600: #4B5563;
+            --apple-gray-700: #374151;
+            --apple-gray-800: #1F2937;
+            --apple-gray-900: #111827;
+            
+            /* Typography */
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--apple-gray-50);
+            color: var(--apple-gray-900);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Apple-style Header */
+        .apple-header {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--magenta) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .apple-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            pointer-events: none;
+        }
+        
+        .apple-header * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .apple-header-text {
+            color: #ffffff !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+        }
+        
+        .apple-header-subtitle {
+            color: rgba(255, 255, 255, 0.95) !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .apple-header-description {
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 헤더 내 모든 텍스트 요소에 강한 대비 적용 */
+        .apple-header h1,
+        .apple-header h2,
+        .apple-header h3,
+        .apple-header p,
+        .apple-header span {
+            color: #ffffff !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* 헤더 내 링크와 버튼 스타일 */
+        .apple-header a {
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .apple-header a:hover {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+        
+        /* Apple-style Cards */
+        .apple-card {
+            background: var(--apple-white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--apple-gray-200);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .apple-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--apple-gray-300);
+        }
+        
+        /* Apple-style Buttons */
+        .apple-btn {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        
+        .apple-btn-primary {
+            background: var(--magenta);
+            color: var(--apple-white);
+        }
+        
+        .apple-btn-primary:hover {
+            background: #C0156B;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .apple-btn-secondary {
+            background: var(--apple-white);
+            color: var(--apple-gray-700);
+            border: 1px solid var(--apple-gray-300);
+        }
+        
+        .apple-btn-secondary:hover {
+            background: var(--apple-gray-50);
+            border-color: var(--apple-gray-400);
+        }
+        
+        /* Apple-style Form Elements */
+        .apple-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--apple-gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--apple-white);
+        }
+        
+        .apple-input:focus {
+            outline: none;
+            border-color: var(--magenta);
+            box-shadow: 0 0 0 3px rgba(215, 23, 123, 0.1);
+        }
+        
+        .apple-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--apple-gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            background: var(--apple-white);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .apple-select:focus {
+            outline: none;
+            border-color: var(--magenta);
+            box-shadow: 0 0 0 3px rgba(215, 23, 123, 0.1);
+        }
+        
+        /* Apple-style Typography */
+        .apple-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 2.25rem;
+            line-height: 1.2;
+            color: var(--apple-gray-900);
+            letter-spacing: -0.025em;
+        }
+        
+        .apple-subtitle {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.5rem;
+            line-height: 1.3;
+            color: var(--apple-gray-800);
+            letter-spacing: -0.025em;
+        }
+        
+        .apple-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--apple-gray-600);
+        }
+        
+        .apple-text-sm {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--apple-gray-500);
+        }
+        
+        /* Apple-style Icons */
+        .apple-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .apple-icon:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Apple-style Animations */
+        @keyframes apple-fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes apple-scale-in {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .apple-fade-in {
+            animation: apple-fade-in 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .apple-scale-in {
+            animation: apple-scale-in 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Apple-style Loading */
+        .apple-loading {
+            animation: apple-spin 1s linear infinite;
+        }
+        
+        @keyframes apple-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Apple-style Modal */
+        .apple-modal {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+        }
+        
+        .apple-modal-content {
+            background: var(--apple-white);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            border: 1px solid var(--apple-gray-200);
+        }
+        
+        /* Apple-style Status Indicators */
+        .apple-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-lg);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .apple-status-online {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .apple-status-processing {
+            background: rgba(59, 130, 246, 0.1);
+            color: #2563eb;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .apple-title {
+                font-size: 1.875rem;
+            }
+            
+            .apple-subtitle {
+                font-size: 1.25rem;
+            }
+            
+            .apple-card {
+            border-radius: var(--radius-lg);
+            }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--apple-gray-100);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--apple-gray-300);
+            border-radius: var(--radius-md);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--apple-gray-400);
+        }
+
+        /* Team Status Form Styles */
+        .team-status-form {
+            background: var(--apple-white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--apple-gray-200);
+        }
+
+        .team-status-form .form-section {
+            border-bottom: 1px solid var(--apple-gray-200);
+            padding-bottom: 2rem;
+        }
+
+        .team-status-form .form-section:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .team-status-form .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .team-status-form .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .team-status-form .form-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--apple-gray-700);
+        }
+
+        .team-status-form .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--apple-gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--apple-white);
+        }
+
+        .team-status-form .form-input:focus {
+            outline: none;
+            border-color: var(--magenta);
+            box-shadow: 0 0 0 3px rgba(215, 23, 123, 0.1);
+        }
+
+        .team-status-form .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--apple-gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            background: var(--apple-white);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .team-status-form .form-select:focus {
+            outline: none;
+            border-color: var(--magenta);
+            box-shadow: 0 0 0 3px rgba(215, 23, 123, 0.1);
+        }
+
+        .team-status-form .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--apple-gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            resize: vertical;
+            min-height: 80px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--apple-white);
+        }
+
+        .team-status-form .form-textarea:focus {
+            outline: none;
+            border-color: var(--magenta);
+            box-shadow: 0 0 0 3px rgba(215, 23, 123, 0.1);
+        }
+
+        .team-status-form .form-radio-group,
+        .team-status-form .form-checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .team-status-form .form-radio,
+        .team-status-form .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .team-status-form .form-radio input,
+        .team-status-form .form-checkbox input {
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--magenta);
+        }
+
+        .team-status-form .form-radio span,
+        .team-status-form .form-checkbox span {
+            font-size: 0.875rem;
+            color: var(--apple-gray-700);
+        }
+
+        .team-status-form .form-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--apple-gray-200);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .team-status-form .form-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--magenta);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-status-form .form-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--magenta);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-status-form .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .team-status-form .slider-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #EF4444;
+            min-width: 1.5rem;
+            text-align: center;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .team-status-form .age-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .team-status-form .age-input-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .team-status-form .age-input {
+            width: 5rem;
+            padding: 0.5rem;
+            border: 1px solid var(--apple-gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        .team-status-form .age-label {
+            font-size: 0.875rem;
+            color: var(--apple-gray-600);
+            min-width: 4rem;
+        }
+
+        .team-status-form .char-counter {
+            font-size: 0.75rem;
+            color: var(--apple-gray-500);
+            text-align: right;
+        }
+
+        .team-status-form .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--apple-gray-200);
+        }
+
+        .team-status-form .btn-save {
+            background: var(--magenta);
+            color: var(--apple-white);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .team-status-form .btn-save:hover:not(:disabled) {
+            background: #C0156B;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .team-status-form .btn-save:disabled {
+            background: var(--apple-gray-300);
+            color: var(--apple-gray-500);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .team-status-form .btn-edit {
+            background: var(--apple-white);
+            color: var(--apple-gray-700);
+            border: 1px solid var(--apple-gray-300);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .team-status-form .btn-edit:hover {
+            background: var(--apple-gray-50);
+            border-color: var(--apple-gray-400);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--apple-white);
+            border: 1px solid var(--apple-gray-200);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            padding: 1rem 1.5rem;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid #10B981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #EF4444;
+        }
+
+        .toast.info {
+            border-left: 4px solid #3B82F6;
+        }
+
+        .toast-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+
+        .toast.success .toast-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+        }
+
+        .toast.error .toast-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+        }
+
+        .toast.info .toast-icon {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3B82F6;
+        }
+
+        .toast-message {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--apple-gray-800);
+        }
+
+        /* Responsive Design for Team Status Form */
+        @media (max-width: 768px) {
+            .team-status-form .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .team-status-form .form-buttons {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .team-status-form .btn-save,
+            .team-status-form .btn-edit {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .team-status-form .slider-container {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: stretch;
+            }
+
+            .team-status-form .age-input-row {
+                justify-content: space-between;
+            }
+
+            .toast {
+                top: 1rem;
+                right: 1rem;
+                left: 1rem;
+                transform: translateY(-100%);
+            }
+
+            .toast.show {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Apple-style Header -->
+    <header class="apple-header">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-4">
+                         <img src="logo_lgchem_white.png" alt="LG화학" class="h-10 w-auto" style="filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));">
+                        <div class="h-8 w-px bg-white opacity-30"></div>
+                    </div>
+                    <div>
+                        <h1 class="apple-title apple-header-text mb-1">AI First Leadership Agent</h1>
+                        <p class="apple-text-sm apple-header-subtitle">LG화학 리더들의 실질적 성장을 돕고 코칭 역량을 강화합니다.</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="apple-text-sm apple-header-description"></span>
+                    <div class="apple-status apple-status-online">
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span class="apple-header-text">온라인</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Apple-style Main Content -->
+    <main id="mainPage" class="container mx-auto px-6 py-12">
+        <!-- Hero Section -->
+        <section class="text-center mb-16 apple-fade-in">
+            <h2 class="apple-title mb-6">AI Feedback & Coaching Agent</h2>
+            <p class="apple-text text-xl max-w-2xl mx-auto">효과적 리더십 발휘를 위한 실시간 데이터 기반 에이전트로,<br>
+                AI가 리더의 코칭 준비, 실행, 피드백까지 함께 지원합니다.</p>
+        </section>
+
+        <!-- Feature Cards Grid -->
+        <section class="mb-16">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Meeting Prep -->
+                <div class="apple-card p-8 cursor-pointer apple-scale-in" id="meetingPrepCard" style="animation-delay: 0.1s;">
+                    <div class="text-center">
+                        <div class="apple-icon mx-auto mb-6" style="background: rgba(215, 23, 123, 0.1); color: var(--magenta);">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3 class="apple-subtitle mb-3">Meeting Prep</h3>
+                        <p class="apple-text mb-4">팀원별 성과·피드백·설문 데이터를 분석해<br>
+                            맞춤형 코칭 질문과 <br> 대화 포인트를 자동 생성합니다.<br>
+                            리더의 미팅 준비 시간을 단축하고,<br> 대화의 깊이를 높입니다.<br><br>
+                        </p>
+                        <ul class="apple-text text-left mb-6 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>리더 준비시간 80% 절감</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>데이터 기반 대화 품질 향상</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>구성원 몰입·신뢰도 강화</span>
+                            </li>
+                        </ul>
+                        <a href="meeting-prep.html" class="apple-btn apple-btn-primary">
+                            <span>시작하기</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Insight Report -->
+                <div class="apple-card p-8 cursor-pointer apple-scale-in" id="insightReportCard" style="animation-delay: 0.2s;">
+                    <div class="text-center">
+                        <div class="apple-icon mx-auto mb-6" style="background: rgba(85, 29, 131, 0.1); color: var(--purple);">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="apple-subtitle mb-3">Insight Report</h3>
+                        <p class="apple-text mb-4">팀원들의 정서 상태, 대화 패턴,<br>성과 데이터를 통합 분석하여<br>
+                            리더가 팀원의 현재 상태를 <br>객관적으로 파악할 수 있도록 지원합니다.<br>
+                            데이터 기반의 대시보드로<br> 팀의 상황을 한눈에 파악합니다.</p>
+                        <ul class="apple-text text-left mb-6 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>팀 몰입도 및 리스크 요인 실시간 탐지</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>리더십 개입 시점 및 방향성 제안</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>객관적 데이터 기반 사람 관리 가능</span>
+                            </li>
+                        </ul>
+                        <a href="insight-report.html" class="apple-btn apple-btn-primary">
+                            <span>시작하기</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Issue Navigator -->
+                <div class="apple-card p-8 cursor-pointer apple-scale-in" id="rolePlayingCard" style="animation-delay: 0.3s;">
+                    <div class="text-center">
+                        <div class="apple-icon mx-auto mb-6" style="background: rgba(112, 192, 230, 0.1); color: var(--light-blue);">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="apple-subtitle mb-3">Issue Navigator</h3>
+                        <p class="apple-text mb-4">팀의 감정, 피드백, 성과 데이터를<br>
+                            종합 분석해 팀 내 문제 원인을<br>
+                            객관적으로 진단하고,<br>
+                            AI와 함께 실행 가능한 해법을<br>
+                            설계할 수 있도록 지원합니다.<br>
+                            <br>
+                        </p>
+                        <ul class="apple-text text-left mb-6 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>팀 내 이슈의 근본 원인 자동 진단</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>데이터 기반 솔루션 및 행동 제안</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>리더십 실행력 및 문제 해결 역량 강화</span>
+                            </li>
+                        </ul>
+                        <a href="role-playing.html" class="apple-btn apple-btn-primary">
+                            <span>시작하기</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 롤플레잉 지원 -->
+                <div class="apple-card p-8 cursor-pointer apple-scale-in" id="voiceChatCard" style="animation-delay: 0.4s;">
+                    <div class="text-center">
+                        <div class="apple-icon mx-auto mb-6" style="background: rgba(0, 135, 133, 0.1); color: var(--deep-blue);">
+                            <i class="fas fa-microphone"></i>
+                        </div>
+                        <h3 class="apple-subtitle mb-3">롤플레잉 지원</h3>
+                        <p class="apple-text mb-6">실제 팀원 데이터를 기반으로 생성된<br>
+                            AI 페르소나와의
+                            코칭 시뮬레이션을 통해 <br>
+                            리더십 대화 역량을 연습할 수 있습니다.<br>
+                            코칭 종료 후 AI가 피드백을 제공하여<br>
+                            리더의 코칭 개발 포인트를<br>
+                            구체적으로 제시합니다.<br>
+                        </p>
+                        <ul class="apple-text text-left mb-6 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>코칭 실전 감각 및 대화 스킬 강화</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>즉각적 피드백으로 리더 자기인식 향상</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>리더십 개발 교육과의 연계 가능</span>
+                            </li>
+                        </ul>
+                        <a href="voice-chat.html" class="apple-btn apple-btn-primary">
+                            <span>시작하기</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Status Input Section -->
+        <section class="mb-16">
+            <div class="text-center mb-8">
+                <h3 class="apple-subtitle mb-2">나의 조직 현황 입력하기</h3>
+                <p class="apple-text">AI가 리더님의 조직 상황을 이해하고, 맞춤형 코칭과 피드백을 제공합니다.<br>
+                    입력된 정보는 리더님의 조직 특성에 맞는 코칭 질문,<br>
+                    인사이트 리포트, 이슈 진단 등 AI 분석 전반에 활용됩니다.<br>
+                    한 번 입력하면 시스템 전반에서 자동 반영되며, 필요 시 수정 가능합니다.</p>
+            </div>
+            
+            <div class="apple-card p-8 team-status-form">
+                <form id="teamStatusForm" class="space-y-8">
+                    <!-- 기본 조직 정보 -->
+                    <div class="form-section">
+                        <h4 class="apple-subtitle text-lg mb-6 text-gray-800">① 기본 조직 정보</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label class="form-label">조직명 / 부서명</label>
+                                <input type="text" id="teamName" name="teamName" class="form-input" placeholder="예: Global Marketing">
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">조직원 수</label>
+                                <input type="number" id="teamSize" name="teamSize" class="form-input" placeholder="예: 7" min="1" max="50">
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">조직 성격</label>
+                                <select id="teamRole" name="teamRole" class="form-select">
+                                    <option value="">선택하세요</option>
+                                    <option value="R&D">R&D</option>
+                                    <option value="마케팅">마케팅</option>
+                                    <option value="영업">영업</option>
+                                    <option value="생산">생산</option>
+                                    <option value="지원">지원</option>
+                                    <option value="전략">전략</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">조직 주 연령대</label>
+                                <div class="age-input-group">
+                                    <div class="age-input-row">
+                                        <input type="number" id="age20s" name="age20s" class="age-input" placeholder="명" min="0">
+                                        <span class="age-label">20대</span>
+                                    </div>
+                                    <div class="age-input-row">
+                                        <input type="number" id="age30s" name="age30s" class="age-input" placeholder="명" min="0">
+                                        <span class="age-label">30대</span>
+                                    </div>
+                                    <div class="age-input-row">
+                                        <input type="number" id="age40s" name="age40s" class="age-input" placeholder="명" min="0">
+                                        <span class="age-label">40대</span>
+                                    </div>
+                                    <div class="age-input-row">
+                                        <input type="number" id="age50s" name="age50s" class="age-input" placeholder="명" min="0">
+                                        <span class="age-label">50대 이상</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">주요 근무지</label>
+                                <select id="location" name="location" class="form-select">
+                                    <option value="">선택하세요</option>
+                                    <option value="본사">본사</option>
+                                    <option value="사업장">사업장</option>
+                                    <option value="연구소">연구소</option>
+                                    <option value="생산공장">생산공장</option>
+                                    <option value="해외">해외</option>
+                                    <option value="복수지역">복수지역</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 조직 운영 상황 -->
+                    <div class="form-section">
+                        <h4 class="apple-subtitle text-lg mb-6 text-gray-800">② 조직 운영 상황</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label class="form-label">현재 조직의 업무 복잡도 수준</label>
+                                <div class="slider-container">
+                                    <span class="text-sm text-gray-600">1</span>
+                                    <input type="range" id="workloadLevel" name="workloadLevel" min="1" max="5" value="3" class="form-slider">
+                                    <span class="text-sm text-gray-600">5</span>
+                                    <span id="workloadValue" class="slider-value">3</span>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">조직 내 협업 만족도</label>
+                                <div class="slider-container">
+                                    <span class="text-sm text-gray-600">1</span>
+                                    <input type="range" id="collaborationScore" name="collaborationScore" min="1" max="5" value="3" class="form-slider">
+                                    <span class="text-sm text-gray-600">5</span>
+                                    <span id="collaborationValue" class="slider-value">3</span>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">구성원 목표 정렬 수준</label>
+                                <div class="slider-container">
+                                    <span class="text-sm text-gray-600">1</span>
+                                    <input type="range" id="goalAlignment" name="goalAlignment" min="1" max="5" value="3" class="form-slider">
+                                    <span class="text-sm text-gray-600">5</span>
+                                    <span id="goalAlignmentValue" class="slider-value">3</span>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">구성원 몰입도</label>
+                                <div class="slider-container">
+                                    <span class="text-sm text-gray-600">1</span>
+                                    <input type="range" id="engagementLevel" name="engagementLevel" min="1" max="5" value="3" class="form-slider">
+                                    <span class="text-sm text-gray-600">5</span>
+                                    <span id="engagementValue" class="slider-value">3</span>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">1:1 피드백 빈도</label>
+                                <div class="form-radio-group">
+                                    <label class="form-radio">
+                                        <input type="radio" name="feedbackFrequency" value="주 1회 이상">
+                                        <span>주 1회 이상</span>
+                                    </label>
+                                    <label class="form-radio">
+                                        <input type="radio" name="feedbackFrequency" value="월 1회">
+                                        <span>월 1회</span>
+                                    </label>
+                                    <label class="form-radio">
+                                        <input type="radio" name="feedbackFrequency" value="분기 1회">
+                                        <span>분기 1회</span>
+                                    </label>
+                                    <label class="form-radio">
+                                        <input type="radio" name="feedbackFrequency" value="필요 시만">
+                                        <span>필요 시만</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">현재 조직 운영에서 가장 어려운 점</label>
+                                <textarea id="teamChallenge" name="teamChallenge" rows="3" class="form-textarea" placeholder="자유롭게 작성해주세요"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 리더의 목표 및 필요 지원 -->
+                    <div class="form-section">
+                        <h4 class="apple-subtitle text-lg mb-6 text-gray-800">③ 리더의 목표 및 필요 지원</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label class="form-label">올해 리더로서 개선하고 싶은 부분</label>
+                                <div class="form-checkbox-group">
+                                    <label class="form-checkbox">
+                                        <input type="checkbox" name="leaderGoal" value="코칭 역량">
+                                        <span>코칭 역량</span>
+                                    </label>
+                                    <label class="form-checkbox">
+                                        <input type="checkbox" name="leaderGoal" value="피드백 문화">
+                                        <span>피드백 문화</span>
+                                    </label>
+                                    <label class="form-checkbox">
+                                        <input type="checkbox" name="leaderGoal" value="몰입도 향상">
+                                        <span>몰입도 향상</span>
+                                    </label>
+                                    <label class="form-checkbox">
+                                        <input type="checkbox" name="leaderGoal" value="성과 관리">
+                                        <span>성과 관리</span>
+                                    </label>
+                                    <label class="form-checkbox">
+                                        <input type="checkbox" name="leaderGoal" value="조직 커뮤니케이션">
+                                        <span>조직 커뮤니케이션</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">AI 시스템에서 기대하는 지원 형태</label>
+                                <div class="form-checkbox-group">
+                                    <label class="form-checkbox">
+                                        <input type="checkbox" name="aiSupportExpectation" value="조직 현황 진단">
+                                        <span>조직 현황 진단</span>
+                                    </label>
+                                    <label class="form-checkbox">
+                                        <input type="checkbox" name="aiSupportExpectation" value="1:1 미팅 지원">
+                                        <span>1:1 미팅 지원</span>
+                                    </label>
+                                    <label class="form-checkbox">
+                                        <input type="checkbox" name="aiSupportExpectation" value="피드백 제안">
+                                        <span>피드백 제안</span>
+                                    </label>
+                                    <label class="form-checkbox">
+                                        <input type="checkbox" name="aiSupportExpectation" value="문제 해결 시나리오">
+                                        <span>문제 해결 시나리오</span>
+                                    </label>
+                                    <label class="form-checkbox">
+                                        <input type="checkbox" name="aiSupportExpectation" value="변화관리 제안">
+                                        <span>변화관리 제안</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-field md:col-span-2">
+                                <label class="form-label">기타 자유 의견</label>
+                                <textarea id="comment" name="comment" rows="3" class="form-textarea" placeholder="150자 이내로 작성해주세요" maxlength="150"></textarea>
+                                <div class="char-counter">
+                                    <span id="commentCount">0/150</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 버튼 영역 -->
+                    <div class="form-buttons">
+                        <button type="button" id="saveBtn" class="btn-save">
+                            <i class="fas fa-save"></i>
+                            <span>저장하기</span>
+                        </button>
+                        <button type="button" id="editBtn" class="btn-edit" style="display: none;">
+                            <i class="fas fa-edit"></i>
+                            <span>수정하기</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Recent Activity Section -->
+        <section class="mb-16">
+            <h3 class="apple-subtitle mb-8">최근 활동</h3>
+            <div class="apple-card p-8">
+                <div id="recentActivity" class="space-y-4">
+                    <div class="flex items-center space-x-4 p-4 rounded-lg" style="background: var(--apple-gray-50);">
+                        <div class="apple-icon" style="background: rgba(215, 23, 123, 0.1); color: var(--magenta); width: 2.5rem; height: 2.5rem; font-size: 1rem;">
+                            <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800">김철수님 Meeting Prep 생성</p>
+                            <p class="apple-text-sm">2시간 전</p>
+                            </div>
+                        <div class="apple-status apple-status-processing">
+                            <span>완료</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4 p-4 rounded-lg" style="background: var(--apple-gray-50);">
+                        <div class="apple-icon" style="background: rgba(85, 29, 131, 0.1); color: var(--purple); width: 2.5rem; height: 2.5rem; font-size: 1rem;">
+                            <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800">이영희님 Insight Report 생성</p>
+                            <p class="apple-text-sm">1일 전</p>
+                            </div>
+                        <div class="apple-status apple-status-processing">
+                            <span>완료</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+
+
+    <script src="js/app.js"></script>
+</body>
+</html>

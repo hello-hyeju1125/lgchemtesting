@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Navigator - 코칭피드백 AI 시스템</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Apple-style Design System */
+        :root {
+            /* Color Palette */
+            --magenta: #D7177B;
+            --purple: #551D83;
+            --light-blue: #70C0E6;
+            --deep-blue: #008785;
+            --light-gray: #C4C4C4;
+            
+            /* Apple-style Colors */
+            --apple-white: #FFFFFF;
+            --apple-gray-50: #F9FAFB;
+            --apple-gray-100: #F3F4F6;
+            --apple-gray-200: #E5E7EB;
+            --apple-gray-300: #D1D5DB;
+            --apple-gray-400: #9CA3AF;
+            --apple-gray-500: #6B7280;
+            --apple-gray-600: #4B5563;
+            --apple-gray-700: #374151;
+            --apple-gray-800: #1F2937;
+            --apple-gray-900: #111827;
+            
+            /* Typography */
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--apple-gray-50);
+            color: var(--apple-gray-900);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Apple-style Header */
+        .apple-header {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--magenta) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .apple-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            pointer-events: none;
+        }
+        
+        .apple-header * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .apple-header-text {
+            color: #ffffff !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+        }
+        
+        .apple-header-subtitle {
+            color: rgba(255, 255, 255, 0.95) !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .apple-header-description {
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Apple-style Cards */
+        .apple-card {
+            background: var(--apple-white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--apple-gray-200);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .apple-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--apple-gray-300);
+        }
+        
+        /* Apple-style Buttons */
+        .apple-btn {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        
+        .apple-btn-primary {
+            background: var(--magenta);
+            color: var(--apple-white);
+        }
+        
+        .apple-btn-primary:hover {
+            background: #C0156B;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .apple-btn-secondary {
+            background: var(--apple-white);
+            color: var(--apple-gray-700);
+            border: 1px solid var(--apple-gray-300);
+        }
+        
+        .apple-btn-secondary:hover {
+            background: var(--apple-gray-50);
+            border-color: var(--apple-gray-400);
+        }
+        
+        /* Apple-style Form Elements */
+        .apple-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--apple-gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--apple-white);
+        }
+        
+        .apple-input:focus {
+            outline: none;
+            border-color: var(--magenta);
+            box-shadow: 0 0 0 3px rgba(215, 23, 123, 0.1);
+        }
+        
+        .apple-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--apple-gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            background: var(--apple-white);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .apple-select:focus {
+            outline: none;
+            border-color: var(--magenta);
+            box-shadow: 0 0 0 3px rgba(215, 23, 123, 0.1);
+        }
+        
+        /* Apple-style Typography */
+        .apple-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 2.25rem;
+            line-height: 1.2;
+            color: var(--apple-gray-900);
+            letter-spacing: -0.025em;
+        }
+        
+        .apple-subtitle {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.5rem;
+            line-height: 1.3;
+            color: var(--apple-gray-800);
+            letter-spacing: -0.025em;
+        }
+        
+        .apple-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--apple-gray-600);
+        }
+        
+        .apple-text-sm {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--apple-gray-500);
+        }
+        
+        /* Apple-style Icon */
+        .apple-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        /* Apple-style Loading */
+        .apple-loading {
+            animation: apple-spin 1s linear infinite;
+        }
+        
+        @keyframes apple-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Apple-style Animations */
+        @keyframes apple-fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .apple-fade-in {
+            animation: apple-fade-in 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .apple-title {
+                font-size: 1.875rem;
+            }
+            
+            .apple-subtitle {
+                font-size: 1.25rem;
+            }
+            
+            .apple-card {
+                border-radius: var(--radius-lg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Apple-style Header -->
+    <header class="apple-header">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-4">
+                        <img src="logo_lgchem_white.png" alt="LG화학" class="h-10 w-auto" style="filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));">
+                        <div class="h-8 w-px bg-white opacity-30"></div>
+                    </div>
+                    <div>
+                        <h1 class="apple-title apple-header-text mb-1">Issue Navigator</h1>
+                        <p class="apple-text-sm apple-header-subtitle">팀 내 문제를 진단하고 실행 가능한 해법을 함께 설계</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="apple-btn apple-btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>메인으로</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+        <div class="max-w-4xl mx-auto">
+            <!-- Page Header -->
+            <section class="text-center mb-12 apple-fade-in">
+                <div class="apple-icon mx-auto mb-6" style="background: transparent; color: var(--light-blue); width: 5.2rem; height: 5.2rem; font-size: 2.6rem;">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h2 class="apple-title mb-6">Issue Navigator</h2>
+                <p class="apple-text text-xl max-w-2xl mx-auto">팀의 감정, 피드백, 성과 데이터를 종합 분석해<br>
+                    팀 내 문제의 근본 원인을 객관적으로 진단하고,<br>
+                    AI와 함께 실행 가능한 해법을 설계할 수 있도록 지원합니다.<br><br>
+                
+                    아래 정보를 입력하면 AI가 최근 팀 데이터를 기반으로 <br>
+                    이슈의 원인과 개선 방향을 함께 제안합니다.<br>
+                    진단 결과는 리더의 실행 계획과 코칭 리포트에 자동 반영됩니다.</p>
+            </section>
+
+            <!-- Info Box -->
+            <section class="mb-8 p-6 rounded-xl" style="background: linear-gradient(135deg, rgba(112, 192, 230, 0.1) 0%, rgba(85, 29, 131, 0.1) 100%); border: 1px solid rgba(112, 192, 230, 0.3);">
+                <div class="flex items-start">
+                    <i class="fas fa-lightbulb text-3xl mr-4" style="color: var(--light-blue);"></i>
+                    <div>
+                        <h3 class="font-semibold text-lg mb-2" style="color: var(--purple);">📘 각 인물의 감정과 니즈를 함께 기록해 주세요</h3>
+                        <p class="apple-text-sm" style="color: var(--apple-gray-700);">
+                            AI는 이를 바탕으로 갈등의 근본 원인, 감정적 연결, 숨은 니즈를 함께 분석해
+                            실행 가능한 솔루션을 제안합니다.<br>
+                            <strong>"데이터 중심 + 인간 중심"</strong> 관점에서 팀 문제를 입체적으로 이해할 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Form Section -->
+            <section class="apple-card p-8 mb-8 apple-fade-in">
+                <form id="rolePlayingForm">
+                    <!-- 최근 이슈 상황 입력 -->
+                    <div class="mb-10">
+                        <h3 class="apple-subtitle mb-6 pb-3 border-b-2" style="border-color: var(--magenta);">
+                            <i class="fas fa-exclamation-triangle mr-2" style="color: var(--magenta);"></i>최근 이슈 상황 입력
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <!-- 상황 요약 -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">상황 요약</label>
+                                <textarea id="situationSummary" class="apple-input" rows="3" 
+                                    placeholder="예: 최근 프로젝트 일정 지연으로 팀 내 불만이 증가하고, 책임 소재를 두고 의견 충돌 발생"></textarea>
+                            </div>
+
+                            <!-- 발생 시기 & 영향 정도 -->
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-3">발생 시기</label>
+                                    <select id="occurrenceTime" class="apple-select">
+                                        <option value="">선택해주세요</option>
+                                        <option value="최근 1주">최근 1주</option>
+                                        <option value="1개월">1개월</option>
+                                        <option value="분기">분기</option>
+                                        <option value="반기">반기</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-3">영향 정도 (팀 전체 영향도)</label>
+                                    <div class="flex items-center space-x-4">
+                                        <input type="range" id="impactLevel" class="flex-1" min="1" max="5" value="3" 
+                                            style="accent-color: var(--magenta);">
+                                        <span id="impactLevelValue" class="font-bold text-lg" style="color: var(--magenta); min-width: 2rem;">3</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                        <span>낮음</span>
+                                        <span>중간</span>
+                                        <span>높음</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 주요 감정 반응 -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">주요 감정 반응</label>
+                                <div class="grid md:grid-cols-3 gap-3">
+                                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                                        <input type="checkbox" name="emotionReaction" value="피로" class="mr-3 text-purple-600 focus:ring-purple-500">
+                                        <span class="font-medium text-gray-800">피로</span>
+                                    </label>
+                                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                                        <input type="checkbox" name="emotionReaction" value="갈등" class="mr-3 text-purple-600 focus:ring-purple-500">
+                                        <span class="font-medium text-gray-800">갈등</span>
+                                    </label>
+                                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                                        <input type="checkbox" name="emotionReaction" value="무기력" class="mr-3 text-purple-600 focus:ring-purple-500">
+                                        <span class="font-medium text-gray-800">무기력</span>
+                                    </label>
+                                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                                        <input type="checkbox" name="emotionReaction" value="긴장" class="mr-3 text-purple-600 focus:ring-purple-500">
+                                        <span class="font-medium text-gray-800">긴장</span>
+                                    </label>
+                                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                                        <input type="checkbox" name="emotionReaction" value="혼란" class="mr-3 text-purple-600 focus:ring-purple-500">
+                                        <span class="font-medium text-gray-800">혼란</span>
+                                    </label>
+                                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                                        <input type="checkbox" name="emotionReaction" value="동기 상승" class="mr-3 text-purple-600 focus:ring-purple-500">
+                                        <span class="font-medium text-gray-800">동기 상승</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 최근 관련 피드백 -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">최근 관련 피드백</label>
+                                <textarea id="recentFeedback" class="apple-input" rows="3" 
+                                    placeholder="팀 내 공유된 피드백이나 회의 발언 등을 입력해주세요"></textarea>
+                            </div>
+
+                            <!-- 주요 이해관계자의 역할, 감정, 니즈 등 관련 정보 -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                    주요 이해관계자의 역할, 감정, 니즈 등 관련 정보
+                                </label>
+                                <textarea id="stakeholderInfo" class="apple-input" rows="6" 
+                                    placeholder="각 이해관계자별로 역할, 감정/상태, 표현된 니즈를 함께 작성해주세요.&#10;&#10;예시:&#10;• 김선임 - 역할: 실행 담당 / 감정: 좌절감, 과중한 업무 / 니즈: 도움과 명확한 방향 필요&#10;• 이책임 - 역할: 검토 담당 / 감정: 불만, 성과 압박 / 니즈: 성과 인정 요구&#10;• 정부장 - 역할: 결정권자 / 감정: 냉정, 조율 중 / 니즈: 팀 조율과 일정 확보"></textarea>
+                            </div>
+
+                            <!-- 숨은 니즈 / 비언어적 신호 -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                    숨은 니즈 / 비언어적 신호
+                                </label>
+                                <textarea id="hiddenNeeds" class="apple-input" rows="3" 
+                                    placeholder="예: 말은 협조적이지만 실행 단계에서 회의감 표현, 책임 전가 우려 등 — 리더가 감지한 미묘한 신호"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 리더 인식 및 목표 -->
+                    <div class="mb-10">
+                        <h3 class="apple-subtitle mb-6 pb-3 border-b-2" style="border-color: var(--purple);">
+                            <i class="fas fa-bullseye mr-2" style="color: var(--purple);"></i>리더 인식 및 목표
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <!-- 리더가 보는 원인 -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">리더가 보는 원인</label>
+                                <textarea id="leaderCauseView" class="apple-input" rows="3" 
+                                    placeholder="예: 업무 분장 불균형, 의사소통 단절, 리더 개입 부족 등"></textarea>
+                            </div>
+
+                            <!-- 리더가 원하는 해결 방향 -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">리더가 원하는 해결 방향</label>
+                                <textarea id="leaderSolutionDirection" class="apple-input" rows="3" 
+                                    placeholder="예: 협업 프로세스 재정비, 역할 명확화, 피드백 문화 강화 등"></textarea>
+                            </div>
+
+                            <!-- 해결 우선순위 & 실행 기간 목표 -->
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-3">해결 우선순위</label>
+                                    <select id="solutionPriority" class="apple-select">
+                                        <option value="">선택해주세요</option>
+                                        <option value="1순위">1순위 (최우선)</option>
+                                        <option value="2순위">2순위 (중요)</option>
+                                        <option value="3순위">3순위 (보통)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-3">실행 기간 목표</label>
+                                    <select id="executionPeriod" class="apple-select">
+                                        <option value="">선택해주세요</option>
+                                        <option value="1주">1주</option>
+                                        <option value="1개월">1개월</option>
+                                        <option value="분기">분기</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- 리더가 필요로 하는 지원 -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">리더가 필요로 하는 지원</label>
+                                <div class="grid md:grid-cols-2 gap-3">
+                                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                                        <input type="checkbox" name="leaderSupport" value="AI 진단" class="mr-3 text-purple-600 focus:ring-purple-500">
+                                        <span class="font-medium text-gray-800">AI 진단</span>
+                                    </label>
+                                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                                        <input type="checkbox" name="leaderSupport" value="실행 코칭" class="mr-3 text-purple-600 focus:ring-purple-500">
+                                        <span class="font-medium text-gray-800">실행 코칭</span>
+                                    </label>
+                                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                                        <input type="checkbox" name="leaderSupport" value="팀 피드백 설계" class="mr-3 text-purple-600 focus:ring-purple-500">
+                                        <span class="font-medium text-gray-800">팀 피드백 설계</span>
+                                    </label>
+                                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                                        <input type="checkbox" name="leaderSupport" value="변화관리 시나리오" class="mr-3 text-purple-600 focus:ring-purple-500">
+                                        <span class="font-medium text-gray-800">변화관리 시나리오</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 리더 코멘트 -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">리더 코멘트</label>
+                                <textarea id="leaderComment" class="apple-input" rows="3" 
+                                    placeholder="AI 분석 시 참고할 리더의 판단이나 개인 메모를 입력해주세요"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden field for text mode only -->
+                    <input type="hidden" name="communicationMode" value="text">
+                    
+                    <div class="flex justify-end space-x-4">
+                        <a href="index.html" class="apple-btn apple-btn-secondary">취소</a>
+                        <button type="submit" class="apple-btn apple-btn-primary">
+                            <i class="fas fa-comments"></i>
+                            <span>네비게이터와 대화하기</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Chat Section -->
+            <section id="chatSection" class="hidden">
+                <!-- 챗봇 대화창 -->
+                <div class="apple-card p-8 mb-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="apple-subtitle">
+                            <i class="fas fa-robot mr-2" style="color: var(--light-blue);"></i>
+                            Issue Navigator 대화
+                        </h3>
+                        <button id="endChatBtn" class="apple-btn apple-btn-secondary">
+                            <i class="fas fa-times"></i>
+                            <span>대화 종료</span>
+                        </button>
+                    </div>
+
+                    <!-- 이슈 요약 정보 -->
+                    <div id="issueSummary" class="mb-6 p-4 rounded-lg" style="background: linear-gradient(135deg, rgba(112, 192, 230, 0.1) 0%, rgba(85, 29, 131, 0.1) 100%); border: 1px solid rgba(112, 192, 230, 0.3);">
+                        <h4 class="font-semibold mb-2" style="color: var(--purple);">📋 입력하신 이슈 정보</h4>
+                        <div id="summaryContent" class="apple-text-sm"></div>
+                    </div>
+
+                    <!-- 채팅 메시지 영역 -->
+                    <div id="chatMessages" class="mb-6 p-6 rounded-lg" style="height: 500px; overflow-y: auto; background: var(--apple-gray-50); border: 1px solid var(--apple-gray-200);">
+                        <!-- AI 초기 메시지가 동적으로 생성됩니다 -->
+                    </div>
+
+                    <!-- 입력 영역 -->
+                    <div class="flex space-x-3">
+                        <input type="text" id="chatInput" class="apple-input flex-1" placeholder="메시지를 입력하세요..." autocomplete="off">
+                        <button id="sendMessageBtn" class="apple-btn apple-btn-primary" style="min-width: 84px;">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>전송</span>
+                        </button>
+                    </div>
+
+                    <!-- 로딩 인디케이터 -->
+                    <div id="chatLoading" class="hidden mt-4 flex items-center justify-center">
+                        <div class="apple-loading" style="width: 24px; height: 24px; border: 3px solid var(--apple-gray-300); border-top-color: var(--magenta); border-radius: 50%;"></div>
+                        <span class="ml-3 apple-text-sm text-gray-600">AI가 응답 중입니다...</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 확인 모달 -->
+    <div id="confirmModal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="apple-card p-8 max-w-md w-full mx-auto" style="animation: apple-fade-in 0.3s ease-out;">
+                <div class="text-center mb-6">
+                    <div class="apple-icon mx-auto mb-4" style="background: linear-gradient(135deg, rgba(215, 23, 123, 0.1) 0%, rgba(85, 29, 131, 0.1) 100%); color: var(--magenta); width: 4rem; height: 4rem; font-size: 2rem;">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <h3 class="apple-subtitle mb-3">입력 정보 확인</h3>
+                    <p class="apple-text">정교한 분석을 위해 아래의 내용 기입이 필요합니다.<br>그래도 진행하시겠습니까?</p>
+                </div>
+                <div class="flex justify-center space-x-4">
+                    <button id="modalNoBtn" class="apple-btn apple-btn-secondary">
+                        <i class="fas fa-times"></i>
+                        <span>아니오</span>
+                    </button>
+                    <button id="modalYesBtn" class="apple-btn apple-btn-primary">
+                        <i class="fas fa-check"></i>
+                        <span>네</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/issue-navigator.js"></script>
+</body>
+</html>
