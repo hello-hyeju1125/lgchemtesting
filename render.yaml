@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: lgchemtesting
+    env: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    autoDeploy: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: OPENAI_API_KEY
+        sync: false
+    healthCheckPath: /health
+    
+# Optional: static site for public assets (Render Static)
+# staticSites:
+#   - name: lgchemtesting-static
+#     buildCommand: ''
+#     publishPath: public
+#     pullRequestPreviewsEnabled: true
