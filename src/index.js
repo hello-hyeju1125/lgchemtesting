@@ -104,10 +104,13 @@ app.use('*', (req, res) => {
 // 에러 핸들러
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`🚀 코칭피드백 AI 시스템이 포트 ${PORT}에서 실행 중입니다`);
-  console.log(`📊 대시보드: http://localhost:${PORT}`);
-  console.log(`🔍 헬스 체크: http://localhost:${PORT}/health`);
-});
+// Vercel(서버리스) 환경에서는 앱이 직접 listen 하지 않습니다
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 코칭피드백 AI 시스템이 포트 ${PORT}에서 실행 중입니다`);
+    console.log(`📊 대시보드: http://localhost:${PORT}`);
+    console.log(`🔍 헬스 체크: http://localhost:${PORT}/health`);
+  });
+}
 
 export default app;

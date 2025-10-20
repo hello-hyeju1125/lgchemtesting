@@ -1,4 +1,4 @@
-# 리더를 위한 통합형 코칭피드백 AI 시스템
+# 리더를 위한 통합형 코칭피드백 AI 시스템 (lgchemtesting)
 
 효과적인 리더십을 위한 AI 기반 통합 코칭 솔루션입니다. 1:1 미팅 프렙팩 생성, 팀원 인사이트 리포트, Issue Navigator 연습을 통해 리더의 코칭 역량을 향상시킵니다.
 
@@ -42,8 +42,8 @@
 
 ### 1. 저장소 클론
 ```bash
-git clone <repository-url>
-cd coaching-feedback-ai-system
+git clone https://github.com/hello-hyeju1125/lgchemtesting.git
+cd lgchemtesting
 ```
 
 ### 2. 의존성 설치
